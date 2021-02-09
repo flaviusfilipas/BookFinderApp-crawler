@@ -7,8 +7,9 @@ class CarturestiSpider(scrapy.Spider):
     name = "carturesti"
     def start_requests(self):
         #TODO make url dynamic
-        url = f'https://carturesti.ro/product/search/Sapiens?page=1'
-        yield SplashRequest(url=url, callback=self.parse)
+        url = f'https://carturesti.ro/product/search/Sapiens?page=1&id_product_type=26'
+        yield SplashRequest(url=url, callback=self.parse, args={'forbidden_content_types': 'text/css,font/*',
+                                                                'filters': 'easylist'})
 
     def parse(self, response):
         books = response.css('div.cartu-grid-tile')
@@ -26,7 +27,8 @@ class CarturestiSpider(scrapy.Spider):
             book['link'] = book_link
             yield SplashRequest(url=book_link,
                                 callback=self.parse_book_info,
-                                args={'wait': 2},
+                                args={'wait': 0.5, 'images': 0, 'forbidden_content_types': 'text/css,font/* ',
+                                      'filters': 'easylist'},
                                 meta={'book': book})
 
     def parse_book_info(self, response):
