@@ -1,0 +1,6 @@
+|https://carturesti.ro/site-category/menu|
+|https://cdn.dc5.ro/assets/*/js/templates/mega-menu-cats.html|
+|https://cdn.dc5.ro/assets/*/js/templates/mega-menu-subcats.html|
+|https://carturesti.ro/rating/get|
+|https://carturesti.ro/review/get|
+|https://carturesti.ro/product/smarter-similar?id=*|
