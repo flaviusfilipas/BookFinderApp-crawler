@@ -5,8 +5,8 @@ from scrapy_splash import SplashRequest
 
 class CarturestiSpider(scrapy.Spider):
     name = "carturesti"
+    # only for testing purposes. url will be passed through scrapyrt as a param
     def start_requests(self):
-        #TODO make url dynamic
         url = f'https://carturesti.ro/product/search/Sapiens?page=1&id_product_type=26'
         yield SplashRequest(url=url, callback=self.parse, args={'forbidden_content_types': 'text/css,font/*',
                                                                 'filters': 'easylist'})
@@ -21,7 +21,7 @@ class CarturestiSpider(scrapy.Spider):
             book['imgUrl'] = b.css('div.productImageContainer img::attr(src)').get()
             book['price'] = b.css('span.suma::attr(content)').get()
             book['hasStock'] = True if b.css('div.productStock span::text').get() != 'Indisponibil' else False
-
+            book['provider'] = 'Carturesti'
             individual_book_url = b.css('a::attr(href)').get()
             book_link = f'{base_url}{individual_book_url}'
             book['link'] = book_link
