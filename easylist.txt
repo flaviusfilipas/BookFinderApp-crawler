@@ -1,6 +1,13 @@
 |https://carturesti.ro/site-category/menu|
-|https://cdn.dc5.ro/assets/*/js/templates/mega-menu-cats.html|
-|https://cdn.dc5.ro/assets/*/js/templates/mega-menu-subcats.html|
+https://cdn.dc5.ro/assets/*/js/templates/mega-menu-cats.html
+https://cdn.dc5.ro/assets/*/js/templates/mega-menu-subcats.html
 |https://carturesti.ro/rating/get|
 |https://carturesti.ro/review/get|
-|https://carturesti.ro/product/smarter-similar?id=*|
+https://carturesti.ro/product/smarter-similar?id=*
+|https://cdn4.libris.ro/js/librisValidateNewslatters.js|
+https://cdn4.libris.ro/images/*
+https://cdn4.libris.ro/banner/*
+||goodleads.com^
+||connect.facebook.net^
+||t.profitshare.ro^
+||static.criteo.net^
