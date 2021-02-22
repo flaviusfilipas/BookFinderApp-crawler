@@ -19,12 +19,14 @@ class CarturestiSpider(scrapy.Spider):
             book['title'] = b.css('h5::text').get()
             book['author'] = b.css('div.subtitlu-produs a::text').get()
             book['imgUrl'] = b.css('div.productImageContainer img::attr(src)').get()
-            book['price'] = b.css('span.suma::attr(content)').get()
-            book['hasStock'] = True if b.css('div.productStock span::text').get() != 'Indisponibil' else False
-            book['provider'] = 'Carturesti'
             individual_book_url = b.css('a::attr(href)').get()
             book_link = f'{base_url}{individual_book_url}'
-            book['link'] = book_link
+            book['offer'] = {
+                'link': book_link,
+                'provider': 'Carturesti',
+                'price': b.css('span.suma::attr(content)').get(),
+                'hasStock': True if b.css('div.productStock span::text').get() != 'Indisponibil' else False
+            }
             yield SplashRequest(url=book_link,
                                 callback=self.parse_book_info,
                                 args={'wait': 0.5, 'images': 0, 'forbidden_content_types': 'text/css,font/* ',
