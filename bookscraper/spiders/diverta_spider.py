@@ -7,7 +7,7 @@ class DivertaSpider(scrapy.Spider):
     name = 'diverta'
 
     def start_requests(self):
-        url = 'https://www.dol.ro/?sn.q=Dexter&sn.l=40&sn.s=-score&sn.o=0'  # if page_num changes, sn.o += 40
+        url = 'https://www.dol.ro/?sn.q=Sapiens&sn.l=40&sn.s=-score&sn.o=0'  # if page_num changes, sn.o += 40
 
         yield SplashRequest(url=url, callback=self.parse, args={'images': 0, 'forbidden_content_types': 'text/css,'
                                                                                                         'font/* ',
@@ -34,9 +34,10 @@ class DivertaSpider(scrapy.Spider):
 
         isbn = response.xpath("//td[starts-with(text(),'ISBN')]/following-sibling::td/text()").get()
         if isbn is not None:
-            book['isbn'] = isbn.strip()
+            book['isbn'] = isbn.strip().replace('-', '')
         else:
-            book['isbn'] = response.xpath("//td[starts-with(text(),'Cod')]/following-sibling::td/text()").get().strip()
+            book['isbn'] = response.xpath("//td[starts-with(text(),'Cod')]/following-sibling::td/text()").get().strip()\
+                .replace('-', '')
         book['imgUrl'] = response.css('img.product-picture-big::attr(src)').get()
         book['offer'] = {
             'link': link,
