@@ -58,9 +58,10 @@ class ElefantSpider(scrapy.Spider):
         book['coverType'] = response.xpath("//dt[starts-with(text(),'Tip')]/following-sibling::dd/text()").get()
         book['offer'] = {
             'link': response.meta['link'],
-            'price': response.xpath("concat(//div[@data-testing-id ='current-price']/text(),'',//div["
-                                    "@data-testing-id= 'current-price']/child::sup/text())").get().replace(',', '.')
-                .replace('lei', '').strip(),
+            'price': float(response.xpath("concat(//div[@data-testing-id ='current-price']/text(),'',//div["
+                                          "@data-testing-id= 'current-price']/child::sup/text())").get().replace(',',
+                                                                                                                 '.')
+                           .replace('lei', '').strip()),
             'provider': 'Elefant',
             'hasStock': True,
             'transportationCost': 17.98

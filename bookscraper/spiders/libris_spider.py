@@ -51,7 +51,7 @@ class LibrisSpider(scrapy.Spider):
             book['offer'] = {
                 'link': response.meta.get('link'),
                 'provider': 'Libris',
-                'price': response.css('p#price::text').get().split()[0],
+                'price': float(response.css('p#price::text').get().split()[0]),
                 'hasStock': True if response.css('p#stoc::text').get().strip() != 'Indisponibil' else False,
                 'transportationCost': 9.90
             }

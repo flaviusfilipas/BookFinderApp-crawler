@@ -24,7 +24,7 @@ class CarturestiSpider(scrapy.Spider):
             book['offer'] = {
                 'link': book_link,
                 'provider': 'Carturesti',
-                'price': b.css('span.suma::attr(content)').get(),
+                'price': float(b.css('span.suma::attr(content)').get()),
                 'hasStock': True if b.css('div.productStock span::text').get() != 'Indisponibil' else False,
                 'transportationCost': 19.90
             }

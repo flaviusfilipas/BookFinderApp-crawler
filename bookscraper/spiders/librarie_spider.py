@@ -51,7 +51,7 @@ class LibrarieSpider(scrapy.Spider):
         book['offer'] = {
             'link': response.meta.get('link'),
             'provider': 'Librarie.net',
-            'price': price,
+            'price': float(price),
             'hasStock': True if response.xpath("//td[starts-with(text(),'Disponibilitate')]/text()") is not None
             else False,
             'transportationCost': 15.99

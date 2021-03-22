@@ -60,11 +60,11 @@ class EmagSpider(scrapy.Spider):
                 "//td[starts-with(text(),'Numar')]/following-sibling::td/text()").get().strip()
             book['offer'] = {
                 "provider": provider if provider == 'eMAG' else f"{provider} via eMAG",
-                "price": response.xpath(f"concat({price_tag_xpath}/text(),'.',{price_tag_xpath}/child::sup/text())")
-                                 .get().strip(),
+                "price": float(response.xpath(f"concat({price_tag_xpath}/text(),'.',{price_tag_xpath}/child::sup/text())")
+                                       .get().strip()),
                 "link": url,
                 "hasStock": True if response.xpath("//div[contains(@class, 'product-page-pricing')]/child::span/text()")
-                                        .get() is not 'Indisponibil' else False,
+                                            .get() is not 'Indisponibil' else False,
                 "transportationCost": 19.99
             }
 

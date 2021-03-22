@@ -45,7 +45,7 @@ class BooksExpressSpider(scrapy.Spider):
         book['offer'] = {
             'link': link,
             'provider': 'Books Express',
-            'price': response.css('h4 span::attr(content)').get(),
+            'price': float(response.css('h4 span::attr(content)').get()),
             'hasStock': True if response.css('header h4::text').get != 'Carte indisponibilă temporar' else False,
             'transportationCost': 9.90
         }

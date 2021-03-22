@@ -36,14 +36,14 @@ class DivertaSpider(scrapy.Spider):
         if isbn is not None:
             book['isbn'] = isbn.strip().replace('-', '')
         else:
-            book['isbn'] = response.xpath("//td[starts-with(text(),'Cod')]/following-sibling::td/text()").get().strip()\
+            book['isbn'] = response.xpath("//td[starts-with(text(),'Cod')]/following-sibling::td/text()").get().strip() \
                 .replace('-', '')
         book['imgUrl'] = response.css('img.product-picture-big::attr(src)').get()
         book['offer'] = {
             'link': link,
             'provider': 'Diverta',
-            'price': response.xpath("concat(//div[@id='product_price']/text(),'.',//div["
-                                    "@id='product_price']/child::sup/text())").get(),
+            'price': float(response.xpath("concat(//div[@id='product_price']/text(),'.',//div["
+                                          "@id='product_price']/child::sup/text())").get()),
             'hasStock': True,
             'transportationCost': 15.00
         }
