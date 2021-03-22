@@ -46,6 +46,7 @@ class BooksExpressSpider(scrapy.Spider):
             'link': link,
             'provider': 'Books Express',
             'price': response.css('h4 span::attr(content)').get(),
-            'hasStock': True if response.css('header h4::text').get != 'Carte indisponibilă temporar' else False
+            'hasStock': True if response.css('header h4::text').get != 'Carte indisponibilă temporar' else False,
+            'transportationCost': 9.90
         }
         yield book

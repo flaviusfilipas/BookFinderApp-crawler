@@ -24,16 +24,18 @@ class LibrarieSpider(scrapy.Spider):
             yield SplashRequest(url=url,
                                 callback=self.parse_book_info,
                                 meta={'link': url},
-                                args={'wait': 0.5, 'forbidden_content_types': 'text/css,font/* ',
+                                args={'wait': 1, 'forbidden_content_types': 'text/css,font/* ',
                                       'filters': 'easylist'})
 
     def parse_book_info(self, response):
         book = BookItem()
         book['author'] = response.xpath(compute_common_xpath_expr('starts-with', 'Autor(i)', False) + '/a/text()').get()
         book['title'] = response.css('div.css_titlu b::text').get()
-        book['publisher'] = response.xpath(compute_common_xpath_expr('starts-with', 'Editura', False) + '/a/text()') \
-            .get().split()[1]
-        book['numberOfPages'] = response.xpath(compute_common_xpath_expr('starts-with', 'Nr', True)).get().split()[0]
+        publisher = response.xpath(compute_common_xpath_expr('starts-with', 'Editura', False) + '/a/text()') \
+            .get()
+        number_of_pages = response.xpath(compute_common_xpath_expr('starts-with', 'Nr', True)).get()
+        book['publisher'] = publisher.split()[1] if publisher is not None else None
+        book['numberOfPages'] = number_of_pages.split()[0] if number_of_pages is not None else None
         book['coverType'] = response.xpath(compute_common_xpath_expr('starts-with', 'Tip', True)).get()
         book['isbn'] = response.xpath(compute_common_xpath_expr('starts-with', 'ISBN', True)).get()
         book['imgUrl'] = response.css('div.css_coperta img::attr(src)').get()
@@ -51,6 +53,7 @@ class LibrarieSpider(scrapy.Spider):
             'provider': 'Librarie.net',
             'price': price,
             'hasStock': True if response.xpath("//td[starts-with(text(),'Disponibilitate')]/text()") is not None
-            else False
+            else False,
+            'transportationCost': 15.99
         }
         yield book

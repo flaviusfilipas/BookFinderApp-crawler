@@ -62,6 +62,7 @@ class ElefantSpider(scrapy.Spider):
                                     "@data-testing-id= 'current-price']/child::sup/text())").get().replace(',', '.')
                 .replace('lei', '').strip(),
             'provider': 'Elefant',
-            'hasStock': True
+            'hasStock': True,
+            'transportationCost': 17.98
         }
         yield book

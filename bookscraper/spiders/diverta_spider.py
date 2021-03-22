@@ -43,6 +43,7 @@ class DivertaSpider(scrapy.Spider):
             'provider': 'Diverta',
             'price': response.xpath("concat(//div[@id='product_price']/text(),'.',//div["
                                     "@id='product_price']/child::sup/text())").get(),
-            'hasStock': True
+            'hasStock': True,
+            'transportationCost': 15.00
         }
         yield book

@@ -26,7 +26,6 @@ class LibrisSpider(scrapy.Spider):
     def parse_book_info(self, response):
         book = BookItem()
         title_and_author = response.css("h1::text").get().split('-')
-        book['provider'] = 'Libris'
         book['title'] = title_and_author[0].strip()
         book['author'] = title_and_author[1]
         book['publisher'] = response.xpath(
@@ -42,6 +41,7 @@ class LibrisSpider(scrapy.Spider):
             'link': response.meta.get('link'),
             'provider': 'Libris',
             'price': response.css('p#price::text').get().split()[0],
-            'hasStock': True if response.css('p#stoc::text').get().strip() != 'Indisponibil' else False
+            'hasStock': True if response.css('p#stoc::text').get().strip() != 'Indisponibil' else False,
+            'transportationCost': 9.90
         }
         yield book

@@ -25,7 +25,8 @@ class CarturestiSpider(scrapy.Spider):
                 'link': book_link,
                 'provider': 'Carturesti',
                 'price': b.css('span.suma::attr(content)').get(),
-                'hasStock': True if b.css('div.productStock span::text').get() != 'Indisponibil' else False
+                'hasStock': True if b.css('div.productStock span::text').get() != 'Indisponibil' else False,
+                'transportationCost': 19.90
             }
             yield SplashRequest(url=book_link,
                                 callback=self.parse_book_info,
