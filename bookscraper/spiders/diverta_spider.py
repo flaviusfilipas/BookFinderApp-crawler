@@ -31,7 +31,7 @@ class DivertaSpider(scrapy.Spider):
         book['publisher'] = response.xpath("//b[starts-with(text(),'Editura')]/parent::span/text()").get().strip()
         book['numberOfPages'] = response.xpath("//td[contains(text(),'pagini')]/following-sibling::td/text()").get() \
             .strip()
-
+        book['coverType'] = response.xpath("//td[contains(text(),'Tip')]/following-sibling::td/text()").get().strip()
         isbn = response.xpath("//td[starts-with(text(),'ISBN')]/following-sibling::td/text()").get()
         if isbn is not None:
             book['isbn'] = isbn.strip().replace('-', '')
