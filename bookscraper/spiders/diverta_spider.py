@@ -27,7 +27,10 @@ class DivertaSpider(scrapy.Spider):
         link = response.meta.get('link')
         book = BookItem()
         book['title'] = response.css('h1::text').get().strip()
-        book['author'] = response.css('h1 div::text').get()
+        author = response.css('h1 div::text').get().strip()
+        if author is None or author == '':
+            author = response.xpath("//td[contains(text(),'Autor')]/following-sibling::td/text()").get().strip()
+        book['author'] = author
         book['publisher'] = response.xpath("//b[starts-with(text(),'Editura')]/parent::span/text()").get().strip()
         number_of_pages = response.xpath("//td[contains(text(),'pagini')]/following-sibling::td/text()").get() \
             .strip()
