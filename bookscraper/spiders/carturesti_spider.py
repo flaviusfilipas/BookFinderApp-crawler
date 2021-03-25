@@ -30,14 +30,14 @@ class CarturestiSpider(scrapy.Spider):
             }
             yield SplashRequest(url=book_link,
                                 callback=self.parse_book_info,
-                                args={'wait': 0.5, 'images': 0, 'forbidden_content_types': 'text/css,font/* ',
+                                args={'wait': 1, 'images': 0, 'forbidden_content_types': 'text/css,font/* ',
                                       'filters': 'easylist'},
                                 meta={'book': book})
 
     def parse_book_info(self, response):
         book = response.meta.get('book')
-        book['language'] = response.xpath("//span[contains(text(),'Limba: ')]/following-sibling::div/text()").get()
-        book['publisher'] = response.xpath("//span[contains(text(),'Editura: ')]/following-sibling::div/span/a/text()").get()
+        book['publisher'] = response.xpath("//span[contains(text(),'Editura: ')]/following-sibling::div/span/a/text()")\
+            .get()
         book['numberOfPages'] = response.xpath("//span[starts-with(text(),'Nr')]/following-sibling::div/text()").get()
         book['isbn'] = response.xpath("//span[starts-with(text(),'ISBN')]/following-sibling::div/text()").get()
         book['coverType'] = response.xpath("//span[starts-with(text(),'Tip')]/following-sibling::div/text()").get()
