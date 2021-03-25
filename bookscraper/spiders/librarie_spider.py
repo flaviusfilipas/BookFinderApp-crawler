@@ -36,7 +36,8 @@ class LibrarieSpider(scrapy.Spider):
         number_of_pages = response.xpath(compute_common_xpath_expr('starts-with', 'Nr', True)).get()
         book['publisher'] = publisher.split()[1] if publisher is not None else None
         book['numberOfPages'] = number_of_pages.split()[0] if number_of_pages is not None else None
-        book['coverType'] = response.xpath(compute_common_xpath_expr('starts-with', 'Tip', True)).get()
+        cover_type = response.xpath(compute_common_xpath_expr('starts-with', 'Tip', True)).get()
+        book['coverType'] = cover_type.strip().capitalize() if cover_type is not None else None
         book['isbn'] = response.xpath(compute_common_xpath_expr('starts-with', 'ISBN', True)).get()
         book['imgUrl'] = response.css('div.css_coperta img::attr(src)').get()
         if len(response.xpath("//b[starts-with(text(),'Pret')]")) > 0:
