@@ -43,8 +43,9 @@ class LibrisSpider(scrapy.Spider):
             else:
                 book['title'] = title_and_author[0].strip()
                 book['author'] = response.xpath("//p[contains(text(),'Autor')]/child::a/text()").get()
-            book['publisher'] = response.xpath(
+            publisher = response.xpath(
                 "//p[starts-with(text(),'Editura')]/child::a/text()").get()
+            book['publisher'] = publisher.strip() if publisher is not None else None
             number_of_pages = response.xpath("//p[starts-with(text(),'Nr.')]/text()").get()
             book['numberOfPages'] = number_of_pages.split(':')[1].strip() if number_of_pages is not None else None
             book['imgUrl'] = response.css('img.imgProdus::attr(src)').get()

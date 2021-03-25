@@ -51,11 +51,13 @@ class ElefantSpider(scrapy.Spider):
         book['imgUrl'] = response.meta['img']
         book['title'] = response.css('h1.product-title::text').get()
         book['author'] = response.css('h2.product-brand a::text').get()
-        book['publisher'] = response.xpath("//dt[starts-with(text(),'Editura')]/following-sibling::dd/text()").get()
+        publisher = response.xpath("//dt[starts-with(text(),'Editura')]/following-sibling::dd/text()").get()
+        book['publisher'] = publisher.strip() if publisher is not None else None
         book['numberOfPages'] = response.xpath("//dt[starts-with(text(),'Numar')]/following-sibling::dd/text()").get()
         book['isbn'] = response.xpath("//dt[starts-with(text(),'ISBN')]/following-sibling::dd/text()").get().replace(
             '-', '')
-        book['coverType'] = response.xpath("//dt[starts-with(text(),'Tip')]/following-sibling::dd/text()").get()
+        cover_type = response.xpath("//dt[starts-with(text(),'Tip')]/following-sibling::dd/text()").get()
+        book['coverType'] = cover_type.strip() if cover_type is not None else None
         book['offer'] = {
             'link': response.meta['link'],
             'price': float(response.xpath("concat(//div[@data-testing-id ='current-price']/text(),'',//div["
