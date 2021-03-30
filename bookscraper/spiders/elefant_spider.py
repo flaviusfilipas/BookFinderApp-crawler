@@ -16,20 +16,16 @@ class ElefantSpider(scrapy.Spider):
                                        chrome_options=options)
 
     def start_requests(self):
-        url = 'https://www.elefant.ro/search?SearchTerm=Sapiens&StockAvailability=true&SortValue=bestseller'
+        url = 'https://www.elefant.ro/search?SearchTerm=9789734648887'
 
         yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
         self.driver.get(response.url)
         time.sleep(2)
-        self.driver.refresh()
-        time.sleep(3)
-        self.scroll()
-        time.sleep(0.1)
         html = self.driver.find_element_by_tag_name('html').get_attribute('innerHTML')
         res = response.replace(body=html)
-        books_list = res.css("div.product-list-item")
+        books_list = res.css("div.product-list.main-list div.product-list-item")
         for book in books_list:
             url = book.css("a.product-title::attr(href)").get()
             img = book.css('img.product-image::attr(src)').get()
