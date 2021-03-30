@@ -19,7 +19,7 @@ class EmagSpider(scrapy.Spider):
     name = 'emag'
 
     def start_requests(self):
-        url = 'https://www.emag.ro/search/Sapiens%20carte?ref=effective_search'
+        url = 'https://www.emag.ro/search/9789734648887?ref=effective_search'
 
         yield SplashRequest(url=url, callback=self.parse, args={'images': 0, 'forbidden_content_types': 'text/css,'
                                                                                                         'font/* '})

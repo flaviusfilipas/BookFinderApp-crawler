@@ -1,4 +1,5 @@
 import scrapy
+
 from bookscraper.items import BookItem
 from scrapy_splash import SplashRequest
 
@@ -13,7 +14,7 @@ class LibrarieSpider(scrapy.Spider):
     name = 'librarienet'
 
     def start_requests(self):
-        url = 'https://www.librarie.net/cautare-rezultate.php?t=Sapiens'
+        url = 'https://www.librarie.net/cautare-rezultate.php?t=Sapiens. Scurta istorie a omenirii'
 
         yield SplashRequest(url=url, callback=self.parse, args={'forbidden_content_types': 'text/css,font/*',
                                                                 'filters': 'easylist'})

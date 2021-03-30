@@ -16,7 +16,7 @@ class LibrisSpider(scrapy.Spider):
     name = 'libris'
 
     def start_requests(self):
-        url = 'https://www.libris.ro/?sn.l=30&sn.q=Sapiens'
+        url = 'https://www.libris.ro/?sn.l=30&sn.q=9789734648887'
 
         yield SplashRequest(url=url, callback=self.parse, args={'forbidden_content_types': 'text/css,font/*',
                                                                 'filters': 'easylist'})
