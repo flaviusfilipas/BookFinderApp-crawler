@@ -2,13 +2,32 @@ import scrapy
 from bookscraper.items import BookItem
 from scrapy_splash import SplashRequest
 
+lua_script = """
+    function main(splash)
+        assert(splash:go(splash.args.url))
+        
+        function wait_for(splash, condition)
+            while not condition() do
+                splash:wait(0.2)
+            end
+        end
+        
+        wait_for(splash, function()
+            return splash:evaljs("document.evaluate(\\"//span[starts-with(text(),'ISBN')]/following-sibling::div/text()\\",document,null,XPathResult.STRING_TYPE,null).stringValue !== ''")
+        end)
+        
+        return splash:html()
+    end
+"""
+
 
 class CarturestiSpider(scrapy.Spider):
     name = "carturesti"
+
     # only for testing purposes. url will be passed through scrapyrt as a param
     def start_requests(self):
         url = f'https://carturesti.ro/product/search/Sapiens?page=1&id_product_type=26'
-        yield SplashRequest(url=url, callback=self.parse, args={'forbidden_content_types': 'text/css,font/*',
+        yield SplashRequest(url=url, dont_filter=True, callback=self.parse, args={'forbidden_content_types': 'text/css,font/*',
                                                                 'filters': 'easylist'})
 
     def parse(self, response):
@@ -24,22 +43,28 @@ class CarturestiSpider(scrapy.Spider):
             book['offer'] = {
                 'link': book_link,
                 'provider': 'Carturesti',
-                'price': float(b.css('span.suma::attr(content)').get()),
+                'price': float(b.css('span.suma::attr(content)').get()) if b.css('span.suma::attr(content)').get()
+                else None,
                 'hasStock': True if b.css('div.productStock span::text').get() != 'Indisponibil' else False,
                 'transportationCost': 19.90
             }
             yield SplashRequest(url=book_link,
+                                dont_filter=True,
+                                endpoint='execute',
                                 callback=self.parse_book_info,
-                                args={'wait': 1, 'images': 0, 'forbidden_content_types': 'text/css,font/* ',
+                                args={'lua_source': lua_script, 'wait': 0.5, 'images': 0,
+                                      'forbidden_content_types': 'text/css,font/* ',
                                       'filters': 'easylist'},
                                 meta={'book': book})
 
     def parse_book_info(self, response):
         book = response.meta.get('book')
-        book['publisher'] = response.xpath("//span[contains(text(),'Editura: ')]/following-sibling::div/span/a/text()")\
+        publisher = response.xpath("//span[contains(text(),'Editura: ')]/following-sibling::div/span/a/text()") \
             .get()
+        book['publisher'] = publisher.strip() if publisher is not None else None
         book['numberOfPages'] = response.xpath("//span[starts-with(text(),'Nr')]/following-sibling::div/text()").get()
         book['isbn'] = response.xpath("//span[starts-with(text(),'ISBN')]/following-sibling::div/text()").get()
-        book['coverType'] = response.xpath("//span[starts-with(text(),'Tip')]/following-sibling::div/text()").get()
+        cover_type = response.xpath("//span[starts-with(text(),'Tip')]/following-sibling::div/text()").get()
+        book['coverType'] = cover_type if cover_type is not None else None
 
         yield book
