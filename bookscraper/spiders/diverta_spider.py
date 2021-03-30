@@ -12,9 +12,9 @@ class DivertaSpider(scrapy.Spider):
     name = 'diverta'
 
     def start_requests(self):
-        url = 'https://www.dol.ro/?sn.q=Sapiens&sn.l=40&sn.s=-score&sn.o=0'  # if page_num changes, sn.o += 40
+        url = 'https://www.dol.ro/?sn.q=9789734648887'
 
-        yield SplashRequest(url=url, callback=self.parse, args={'images': 0, 'forbidden_content_types': 'text/css,'
+        yield SplashRequest(url=url, callback=self.parse, args={'wait': 1, 'images': 0, 'forbidden_content_types': 'text/css,'
                                                                                                         'font/* ',
                                                                 'filters': 'easylist'})
 
