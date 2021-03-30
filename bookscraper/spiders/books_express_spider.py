@@ -7,7 +7,7 @@ class BooksExpressSpider(scrapy.Spider):
     name = 'booksExpress'
 
     def start_requests(self):
-        url = 'https://www.books-express.ro/search?q=Sapiens&p=1'
+        url = 'https://www.books-express.ro/search?q=9789734648887'
 
         yield SplashRequest(url=url, callback=self.parse, args={'images': 0, 'forbidden_content_types': 'text/css,'
                                                                                                         'font/* ',
@@ -25,7 +25,7 @@ class BooksExpressSpider(scrapy.Spider):
                                       'filters': 'easylist'})
 
     def parse_book_info(self, response):
-        link = response.meta.get('link')
+        link = response.url
         book = BookItem()
         book['title'] = response.css('h1 span::text').get()
         book['author'] = response.xpath('//h1/following-sibling::a/text()').get()
