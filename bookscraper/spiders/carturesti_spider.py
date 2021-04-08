@@ -65,6 +65,6 @@ class CarturestiSpider(scrapy.Spider):
         book['numberOfPages'] = response.xpath("//span[starts-with(text(),'Nr')]/following-sibling::div/text()").get()
         book['isbn'] = response.xpath("//span[starts-with(text(),'ISBN')]/following-sibling::div/text()").get()
         cover_type = response.xpath("//span[starts-with(text(),'Tip')]/following-sibling::div/text()").get()
-        book['coverType'] = cover_type if cover_type is not None else None
+        book['coverType'] = cover_type.strip() if cover_type is not None else None
 
         yield book
