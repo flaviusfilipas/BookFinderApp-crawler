@@ -19,14 +19,19 @@ class DivertaSpider(scrapy.Spider):
                                                                 'filters': 'easylist'})
 
     def parse(self, response):
-        urls = response.css('h3.product-name a::attr(href)').getall()
-        for url in urls:
-            if url.find('carti') != -1:
-                yield SplashRequest(url=url,
-                                    callback=self.parse_book_info,
-                                    meta={'link': url},
-                                    args={'wait': 0.5, 'forbidden_content_types': 'text/css,font/* ',
-                                          'filters': 'easylist'})
+        if response.css("div.product").get() is not None:
+            book = BookItem()
+            has_stock_expression = response.css("div.stock::text").get()
+            has_stock = unicodedata.normalize("NFKD", has_stock_expression).strip() if has_stock_expression is not None \
+                else None
+            book['offer'] = {
+                'link': response.css('h3.product-name a::attr(href)').get(),
+                'provider': 'Diverta',
+                'price': float(response.xpath("//div[contains(@class,'price t-call-to-action')]/text()").get()),
+                'hasStock': True if has_stock is not None else False,
+                'transportationCost': 15.00
+            }
+            yield book
 
     def parse_book_info(self, response):
         link = response.meta.get('link')

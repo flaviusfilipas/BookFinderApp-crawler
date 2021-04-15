@@ -1,9 +1,13 @@
 import scrapy
+from selenium.common.exceptions import NoSuchElementException
+
 from bookscraper.items import BookItem
-from scrapy_splash import SplashRequest
 import time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 class ElefantSpider(scrapy.Spider):
@@ -23,16 +27,29 @@ class ElefantSpider(scrapy.Spider):
     def parse(self, response):
         self.driver.get(response.url)
         time.sleep(2)
-        html = self.driver.find_element_by_tag_name('html').get_attribute('innerHTML')
-        res = response.replace(body=html)
-        books_list = res.css("div.product-list.main-list div.product-list-item")
-        for book in books_list:
-            url = book.css("a.product-title::attr(href)").get()
-            img = book.css('img.product-image::attr(src)').get()
-            yield SplashRequest(url=url,
-                                callback=self.parse_book_info,
-                                meta={'img': img, 'link': url},
-                                args={'wait': 1, 'images': 0, 'forbidden_content_types': 'text/css,font/* '})
+        try:
+            self.driver.find_element_by_class_name("no-search-result-title")
+        except NoSuchElementException:
+            WebDriverWait(self.driver, 5).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "current-price")))
+            html = self.driver.find_element_by_tag_name('html').get_attribute('innerHTML')
+            res = response.replace(body=html)
+            price = res.css("div.current-price::attr(data-price)").get()
+            link = res.css("a.product-title::attr(href)").get()
+            if price is None:
+                price = response.xpath("concat(//div[@data-testing-id ='current-price']/text(),'',//div["
+                                       "@data-testing-id= 'current-price']/child::sup/text())").get().replace(',', '.')\
+                    .replace('lei', '').strip()
+                link = self.driver.current_url
+            book = BookItem()
+            book['offer'] = {
+                'link': link,
+                'price': float(price),
+                'provider': 'Elefant',
+                'hasStock': True,
+                'transportationCost': 17.98
+            }
+            yield book
 
     def scroll(self):
         init_position = 0
