@@ -27,7 +27,7 @@ class CarturestiSpider(scrapy.Spider):
     # only for testing purposes. url will be passed through scrapyrt as a param
     def start_requests(self):
         url = f'https://carturesti.ro/product/search/Sapiens?page=1&id_product_type=26'
-        yield SplashRequest(url=url, dont_filter=True, callback=self.parse, args={'forbidden_content_types': 'text/css,font/*',
+        yield SplashRequest(url=url, dont_filter=True, callback=self.parse, args={'wait': 1,'forbidden_content_types': 'text/css,font/*',
                                                                 'filters': 'easylist'})
 
     def parse(self, response):
@@ -68,3 +68,12 @@ class CarturestiSpider(scrapy.Spider):
         book['coverType'] = cover_type.strip() if cover_type is not None else None
 
         yield book
+
+    def parse_simple_book_info(self, response):
+        b = BookItem()
+        price = response.xpath("concat(//span[@class='pret']/text(),'',//span[@class='bani']/text())").get().strip()
+        b['offer'] = {
+            'price': float(price),
+            'hasStock': True if response.css("span.stocText::text").get() != 'Indisponibil' else False
+        }
+        yield b
