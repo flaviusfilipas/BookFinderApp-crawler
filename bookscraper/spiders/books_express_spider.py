@@ -42,11 +42,12 @@ class BooksExpressSpider(scrapy.Spider):
             book['isbn'] = response.xpath("//span[@itemprop = 'isbn']/text()").get()
         book['imgUrl'] = response.css('figure.cover a img::attr(src)').get()
         book['coverType'] = response.xpath("//link[@itemprop='bookFormat']/@href").get().split("/")[3]
+        stock = response.css('header h4::text').get()
         book['offer'] = {
             'link': link,
             'provider': 'Books Express',
             'price': float(response.css('h4 span::attr(content)').get()),
-            'hasStock': True if response.css('header h4::text').get != 'Carte indisponibilă temporar' else False,
+            'hasStock': True if stock != 'Carte indisponibilă temporar' and stock != 'Disponibilitate incertă' else False,
             'transportationCost': 9.90
         }
         yield book
