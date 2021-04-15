@@ -27,27 +27,15 @@ class BooksExpressSpider(scrapy.Spider):
     def parse_book_info(self, response):
         link = response.url
         book = BookItem()
-        book['title'] = response.css('h1 span::text').get()
-        book['author'] = response.xpath('//h1/following-sibling::a/text()').get()
-        publisher = response.xpath("//a[@itemprop = 'publisher']/text()").get()
-        if publisher is not None:
-            book['publisher'] = publisher
-        else:
-            book['publisher'] = response.xpath("//a[@itemprop = 'manufacturer']/text()").get()
-        book['numberOfPages'] = response.xpath("//span[@itemprop = 'numberOfPages']/text()").get()
-        isbn = link.split(',')
-        if len(isbn) > 1:
-            book['isbn'] = isbn[1]
-        else:
-            book['isbn'] = response.xpath("//span[@itemprop = 'isbn']/text()").get()
-        book['imgUrl'] = response.css('figure.cover a img::attr(src)').get()
-        book['coverType'] = response.xpath("//link[@itemprop='bookFormat']/@href").get().split("/")[3]
         stock = response.css('header h4::text').get()
-        book['offer'] = {
-            'link': link,
-            'provider': 'Books Express',
-            'price': float(response.css('h4 span::attr(content)').get()),
-            'hasStock': True if stock != 'Carte indisponibilă temporar' and stock != 'Disponibilitate incertă' else False,
-            'transportationCost': 9.90
-        }
-        yield book
+        price = response.css('h4 span::attr(content)').get()
+        if price is not None:
+            book['offer'] = {
+                'link': link,
+                'provider': 'Books Express',
+                'price': float(price) if price is not None else None,
+                'hasStock': True if stock != 'Carte indisponibilă temporar' and stock != 'Disponibilitate incertă'
+                else False,
+                'transportationCost': 9.90
+            }
+            yield book

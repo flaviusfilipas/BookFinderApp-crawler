@@ -36,28 +36,11 @@ class EmagSpider(scrapy.Spider):
         url = response.meta.get('url')
         scraped_providers = ['Librarie.Net', 'Libris SRL', 'Carturesti', 'Diverta']
         book = BookItem()
-        provider_xpath = "//span[@class='text-label'][contains(text(),'Vândut')]/parent::div/following-sibling::div"
-        provider = response.xpath(f"{provider_xpath}/text()").get().strip()
-        if provider == '':
-            provider = response.xpath(f"{provider_xpath}/child::a/text()").get().strip()
-        if provider not in scraped_providers:
-            title_and_author = response.css("h1.page-title::text").get()
-            author = response.xpath("//td[starts-with(text(),'Autor')]/following-sibling::td/text()").get().strip()
-            if '\n' in author:
-                author_list = author.split('\n')
-                book['title'] = extract_title(title_and_author, author_list[0])
-                book['author'] = author.replace("\n", ",").strip()
-            else:
-                book['title'] = extract_title(title_and_author, author)
-                book['author'] = author
-
+        provider_response = response.xpath("//div[contains(text(),'Vândut') and "
+                                           "@class='product-highlight']/child::span/text()").get()
+        provider = provider_response.strip() if provider_response is not None else None
+        if provider is not None and provider not in scraped_providers:
             price_tag_xpath = "//p[@class='product-new-price']"
-            book['imgUrl'] = response.css("a.thumbnail.product-gallery-image::attr(href)").get()
-            book['isbn'] = response.xpath("//td[contains(text(),'ISBN')]/following-sibling::td/text()").get().strip()
-            book['coverType'] = response.xpath(
-                "//td[starts-with(text(),'Tip')]/following-sibling::td/text()").get().strip()
-            book['numberOfPages'] = response.xpath(
-                "//td[starts-with(text(),'Numar')]/following-sibling::td/text()").get().strip()
             book['offer'] = {
                 "provider": provider if provider == 'eMAG' else f"{provider} via eMAG",
                 "price": float(response.xpath(f"concat({price_tag_xpath}/text(),'.',{price_tag_xpath}/child::sup/text())")
