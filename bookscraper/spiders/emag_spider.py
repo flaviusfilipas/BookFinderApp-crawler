@@ -36,8 +36,9 @@ class EmagSpider(scrapy.Spider):
         url = response.meta.get('url')
         scraped_providers = ['Librarie.Net', 'Libris SRL', 'Carturesti', 'Diverta']
         book = BookItem()
-        provider_response = response.xpath("//div[contains(text(),'Vândut') and "
-                                           "@class='product-highlight']/child::span/text()").get()
+        response.xpath("//div[contains(text(),'Vândut')]/child::span/child::a/text()").get()
+        provider_response = response.xpath("//div[contains(text(),'Vândut')]/child::span/child::a/text()").get()
+
         provider = provider_response.strip() if provider_response is not None else None
         if provider is not None and provider not in scraped_providers:
             price_tag_xpath = "//p[@class='product-new-price']"

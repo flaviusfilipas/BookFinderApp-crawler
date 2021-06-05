@@ -9,7 +9,7 @@ def get_offer(response):
     return {
         'link': response.meta.get('link'),
         'provider': 'Carturesti',
-        'price': float(price) if price is not None and '' else None,
+        'price': float(price) if price is not None else None,
         'hasStock': True if response.css("span.stocText::text").get() != 'Indisponibil' else False,
         'transportationCost': 19.90
     }
